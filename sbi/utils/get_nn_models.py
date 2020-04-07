@@ -42,7 +42,9 @@ def posterior_nn(
         Neural network
     """
     mean, std = (prior.mean, prior.stddev)
-    standardizing_transform = transforms.AffineTransform(shift=-mean / std, scale=1 / std)
+    standardizing_transform = transforms.AffineTransform(
+        shift=-mean / std, scale=1 / std
+    )
 
     parameter_dim = prior.sample([1]).shape[1]
 
