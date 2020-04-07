@@ -27,7 +27,6 @@
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
 <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
 <link href="../assets/fonts/material-icons.css" rel="stylesheet"/>
-<link href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" rel="stylesheet"/>
 <link href="../static/global.css" rel="stylesheet"/>
 <link href="../css/ansi-colours.css" rel="stylesheet"/>
 <link href="../css/jupyter-cells.css" rel="stylesheet"/>
@@ -967,7 +966,8 @@ the simulator per each of <code class="codehilite"><span class="err">num_rounds<
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span> 75
+<pre><span></span> 74
+ 75
  76
  77
  78
@@ -1035,8 +1035,7 @@ the simulator per each of <code class="codehilite"><span class="err">num_rounds<
 140
 141
 142
-143
-144</pre>
+143</pre>
 </div>
 </td>
 <td class="code">
@@ -1122,7 +1121,7 @@ the simulator per each of <code class="codehilite"><span class="err">num_rounds<
 <div class="doc doc-object doc-method">
 <h4 class="doc doc-heading" data-toc-label="__init__()" id="sbi.inference.snl.snl.SNL.__init__">
 <code class="highlight language-python">
-__init__<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulator</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="n">true_observation</span><span class="p">,</span> <span class="n">density_estimator</span><span class="o">=</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">],</span> <span class="n">simulation_batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">summary_writer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mcmc_method</span><span class="o">=</span><span class="s1">'slice-np'</span><span class="p">)</span> </code>
+__init__<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulator</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="n">true_observation</span><span class="p">,</span> <span class="n">density_estimator</span><span class="p">,</span> <span class="n">simulation_batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">summary_writer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mcmc_method</span><span class="o">=</span><span class="s1">'slice-np'</span><span class="p">)</span> </code>
 <span class="doc doc-properties">
 <small class="doc doc-property doc-property-special"><code>special</code></small>
 </span>
@@ -1131,13 +1130,27 @@ __init__<span class="p">(</span><span class="bp">self</span><span class="p">,</s
 <p>Sequential Neural Likelihood</p>
 <p>Implementation of
 <em>Sequential Neural Likelihood: Fast Likelihood-free Inference with Autoregressive Flows</em> by Papamakarios et al., AISTATS 2019, <a href="https://arxiv.org/abs/1805.07226">https://arxiv.org/abs/1805.07226</a></p>
-<div class="admonition args">
-<p class="admonition-title"> </p>
-<div class="admonition density_estimator">
-<p class="admonition-title">Conditional density estimator q(x|theta) in    </p>
-<p>the form of an nn.Module with <code class="codehilite"><span class="err">log_prob</span></code> and <code class="codehilite"><span class="err">sample</span></code> methods.</p>
-</div>
-</div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>density_estimator</code></td>
+<td><code>Optional[nn.Module]</code></td>
+<td>
+<p>Conditional density estimator <span><span class="MathJax_Preview">q(x|\theta)</span><script type="math/tex">q(x|\theta)</script></span>, a nn.Module with <code class="codehilite"><span class="err">log_prob</span></code> and <code class="codehilite"><span class="err">sample</span></code> methods</p>
+</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>sbi/inference/snl/snl.py</code></summary>
 <table class="highlighttable">
@@ -1192,8 +1205,7 @@ __init__<span class="p">(</span><span class="bp">self</span><span class="p">,</s
 69
 70
 71
-72
-73</pre>
+72</pre>
 </div>
 </td>
 <td class="code">
@@ -1203,20 +1215,19 @@ __init__<span class="p">(</span><span class="bp">self</span><span class="p">,</s
     <span class="n">simulator</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="n">prior</span><span class="p">,</span>
     <span class="n">true_observation</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">density_estimator</span><span class="o">=</span><span class="n">Optional</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
+    <span class="n">density_estimator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
     <span class="n">simulation_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">summary_writer</span><span class="p">:</span> <span class="n">SummaryWriter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">mcmc_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"slice-np"</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">"""Sequential Neural Likelihood</span>
+    <span class="sa">r</span><span class="sd">"""Sequential Neural Likelihood</span>
 
 <span class="sd">    Implementation of</span>
 <span class="sd">    _Sequential Neural Likelihood: Fast Likelihood-free Inference with Autoregressive Flows_ by Papamakarios et al., AISTATS 2019, https://arxiv.org/abs/1805.07226</span>
 
-<span class="sd">    Args:             </span>
-<span class="sd">        density_estimator: Conditional density estimator q(x|theta) in    </span>
-<span class="sd">            the form of an nn.Module with `log_prob` and `sample` methods.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        density_estimator: Conditional density estimator $q(x|\theta)$, a nn.Module with `log_prob` and `sample` methods</span>
 <span class="sd">    """</span>
 
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -2722,8 +2733,6 @@ sbi.utils.get_nn_models.classifier_nn<span class="p">(</span><span class="n">mod
 </div>
 <script src="../assets/javascripts/application.c33a9706.js"></script>
 <script>app.initialize({version:"1.1",url:{base:".."}})</script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"></script>
-<script src="../static/katex.js"></script>
-<script src="../static/nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 </body>
 </html>
