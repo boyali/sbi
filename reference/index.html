@@ -1951,7 +1951,11 @@ sbi.utils.get_nn_models.posterior_nn<span class="p">(</span><span class="n">mode
 149
 150
 151
-152</pre>
+152
+153
+154
+155
+156</pre>
 </div>
 </td>
 <td class="code">
@@ -1984,7 +1988,9 @@ sbi.utils.get_nn_models.posterior_nn<span class="p">(</span><span class="n">mode
 <span class="sd">        Neural network</span>
 <span class="sd">    """</span>
     <span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="p">(</span><span class="n">prior</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">prior</span><span class="o">.</span><span class="n">stddev</span><span class="p">)</span>
-    <span class="n">normalizing_transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">AffineTransform</span><span class="p">(</span><span class="n">shift</span><span class="o">=-</span><span class="n">mean</span> <span class="o">/</span> <span class="n">std</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">std</span><span class="p">)</span>
+    <span class="n">standardizing_transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">AffineTransform</span><span class="p">(</span>
+        <span class="n">shift</span><span class="o">=-</span><span class="n">mean</span> <span class="o">/</span> <span class="n">std</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">std</span>
+    <span class="p">)</span>
 
     <span class="n">parameter_dim</span> <span class="o">=</span> <span class="n">prior</span><span class="o">.</span><span class="n">sample</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
@@ -2010,7 +2016,7 @@ sbi.utils.get_nn_models.posterior_nn<span class="p">(</span><span class="n">mode
         <span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">"made"</span><span class="p">:</span>
-        <span class="n">transform</span> <span class="o">=</span> <span class="n">normalizing_transform</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">standardizing_transform</span>
         <span class="n">distribution</span> <span class="o">=</span> <span class="n">distributions_</span><span class="o">.</span><span class="n">MADEMoG</span><span class="p">(</span>
             <span class="n">features</span><span class="o">=</span><span class="n">parameter_dim</span><span class="p">,</span>
             <span class="n">hidden_features</span><span class="o">=</span><span class="n">hidden_features</span><span class="p">,</span>
@@ -2049,7 +2055,7 @@ sbi.utils.get_nn_models.posterior_nn<span class="p">(</span><span class="n">mode
             <span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">CompositeTransform</span><span class="p">([</span><span class="n">normalizing_transform</span><span class="p">,</span> <span class="n">transform</span><span class="p">,])</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">CompositeTransform</span><span class="p">([</span><span class="n">standardizing_transform</span><span class="p">,</span> <span class="n">transform</span><span class="p">,])</span>
 
         <span class="n">distribution</span> <span class="o">=</span> <span class="n">distributions_</span><span class="o">.</span><span class="n">StandardNormal</span><span class="p">((</span><span class="n">parameter_dim</span><span class="p">,))</span>
         <span class="n">neural_net</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">Flow</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">distribution</span><span class="p">,</span> <span class="n">embedding</span><span class="p">)</span>
@@ -2084,6 +2090,8 @@ sbi.utils.get_nn_models.posterior_nn<span class="p">(</span><span class="n">mode
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">flow_num_transforms</span><span class="p">)</span>
             <span class="p">]</span>
         <span class="p">)</span>
+
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">CompositeTransform</span><span class="p">([</span><span class="n">standardizing_transform</span><span class="p">,</span> <span class="n">transform</span><span class="p">,])</span>
 
         <span class="n">distribution</span> <span class="o">=</span> <span class="n">distributions_</span><span class="o">.</span><span class="n">StandardNormal</span><span class="p">((</span><span class="n">parameter_dim</span><span class="p">,))</span>
         <span class="n">neural_net</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">Flow</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">distribution</span><span class="p">,</span> <span class="n">embedding</span><span class="p">)</span>
@@ -2215,11 +2223,7 @@ sbi.utils.get_nn_models.likelihood_nn<span class="p">(</span><span class="n">mod
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>155
-156
-157
-158
-159
+<pre><span></span>159
 160
 161
 162
@@ -2345,7 +2349,11 @@ sbi.utils.get_nn_models.likelihood_nn<span class="p">(</span><span class="n">mod
 282
 283
 284
-285</pre>
+285
+286
+287
+288
+289</pre>
 </div>
 </td>
 <td class="code">
@@ -2564,11 +2572,7 @@ sbi.utils.get_nn_models.classifier_nn<span class="p">(</span><span class="n">mod
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>288
-289
-290
-291
-292
+<pre><span></span>292
 293
 294
 295
@@ -2614,7 +2618,11 @@ sbi.utils.get_nn_models.classifier_nn<span class="p">(</span><span class="n">mod
 335
 336
 337
-338</pre>
+338
+339
+340
+341
+342</pre>
 </div>
 </td>
 <td class="code">
