@@ -948,18 +948,93 @@ Inference</em> by Greenberg et al., ICML 2019, <a href="https://arxiv.org/abs/19
 <div class="doc doc-object doc-method">
 <h4 class="doc doc-heading" data-toc-label="__call__()" id="sbi.inference.snl.snl.SNL.__call__">
 <code class="highlight language-python">
-__call__<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_rounds</span><span class="p">,</span> <span class="n">num_simulations_per_round</span><span class="p">)</span> </code>
+__call__<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_rounds</span><span class="p">,</span> <span class="n">num_simulations_per_round</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">,</span> <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">stop_after_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> </code>
 <span class="doc doc-properties">
 <small class="doc doc-property doc-property-special"><code>special</code></small>
 </span>
 </h4>
 <div class="doc doc-contents">
-<p>Run SNL over multiple rounds.</p>
-<p>This method requires num_simulations_per_round calls to
-the simulator per each of <code class="codehilite"><span class="err">num_rounds</span></code>.</p>
-<p>:param num_rounds: Number of rounds to run.
-:param num_simulations_per_round: Number of simulator calls per round.
-:return: None</p>
+<p>Run SNL</p>
+<p>This runs SNL for num_rounds rounds, using num_simulations_per_round calls to
+the simulator</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>num_rounds</code></td>
+<td><code>int</code></td>
+<td>
+<p>Number of rounds to run</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>num_simulations_per_round</code></td>
+<td><code>Union[List[int], int]</code></td>
+<td>
+<p>Number of simulator calls per round</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>batch_size</code></td>
+<td><code>int</code></td>
+<td>
+<p>Size of batch to use for training.</p>
+</td>
+<td><code>100</code></td>
+</tr>
+<tr>
+<td><code>learning_rate</code></td>
+<td><code>float</code></td>
+<td>
+<p>Learning rate for Adam optimizer.</p>
+</td>
+<td><code>0.0005</code></td>
+</tr>
+<tr>
+<td><code>validation_fraction</code></td>
+<td><code>float</code></td>
+<td>
+<p>The fraction of data to use for validation.</p>
+</td>
+<td><code>0.1</code></td>
+</tr>
+<tr>
+<td><code>stop_after_epochs</code></td>
+<td><code>int</code></td>
+<td>
+<p>The number of epochs to wait for improvement on the validation set before terminating training.</p>
+</td>
+<td><code>20</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Posterior</code></td>
+<td>
+<p>Posterior that can be sampled and evaluated</p>
+</td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>sbi/inference/snl/snl.py</code></summary>
 <table class="highlighttable">
@@ -1035,23 +1110,56 @@ the simulator per each of <code class="codehilite"><span class="err">num_rounds<
 140
 141
 142
-143</pre>
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
-<pre><span></span><code><span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_simulations_per_round</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Run SNL over multiple rounds.</span>
+<pre><span></span><code><span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">num_rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_simulations_per_round</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e-4</span><span class="p">,</span>
+    <span class="n">validation_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">stop_after_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Posterior</span><span class="p">:</span>
+    <span class="sd">"""Run SNL</span>
 
-<span class="sd">    This method requires num_simulations_per_round calls to</span>
-<span class="sd">    the simulator per each of `num_rounds`.</span>
+<span class="sd">    This runs SNL for num_rounds rounds, using num_simulations_per_round calls to</span>
+<span class="sd">    the simulator</span>
 
-<span class="sd">    :param num_rounds: Number of rounds to run.</span>
-<span class="sd">    :param num_simulations_per_round: Number of simulator calls per round.</span>
-<span class="sd">    :return: None</span>
+<span class="sd">    Args:</span>
+<span class="sd">        num_rounds: Number of rounds to run</span>
+<span class="sd">        num_simulations_per_round: Number of simulator calls per round</span>
+<span class="sd">        batch_size: Size of batch to use for training.</span>
+<span class="sd">        learning_rate: Learning rate for Adam optimizer.</span>
+<span class="sd">        validation_fraction: The fraction of data to use for validation.</span>
+<span class="sd">        stop_after_epochs: The number of epochs to wait for improvement on the</span>
+<span class="sd">            validation set before terminating training.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Posterior that can be sampled and evaluated</span>
 <span class="sd">    """</span>
-
     <span class="n">round_description</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="n">tbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_rounds</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">round_</span> <span class="ow">in</span> <span class="n">tbar</span><span class="p">:</span>
@@ -1086,7 +1194,12 @@ the simulator per each of <code class="codehilite"><span class="err">num_rounds<
         <span class="bp">self</span><span class="o">.</span><span class="n">_observation_bank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">observations</span><span class="p">))</span>
 
         <span class="c1"># Fit neural likelihood to newly aggregated dataset.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_likelihood</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">learning_rate</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span>
+            <span class="n">validation_fraction</span><span class="o">=</span><span class="n">validation_fraction</span><span class="p">,</span>
+            <span class="n">stop_after_epochs</span><span class="o">=</span><span class="n">stop_after_epochs</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Update description for progress bar.</span>
         <span class="n">round_description</span> <span class="o">=</span> <span class="p">(</span>
@@ -1279,24 +1392,86 @@ __init__<span class="p">(</span><span class="bp">self</span><span class="p">,</s
 <div class="doc doc-object doc-method">
 <h4 class="doc doc-heading" data-toc-label="__call__()" id="sbi.inference.sre.sre.SRE.__call__">
 <code class="highlight language-python">
-__call__<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_rounds</span><span class="p">,</span> <span class="n">num_simulations_per_round</span><span class="p">)</span> </code>
+__call__<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_rounds</span><span class="p">,</span> <span class="n">num_simulations_per_round</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">,</span> <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">stop_after_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> </code>
 <span class="doc doc-properties">
 <small class="doc doc-property doc-property-special"><code>special</code></small>
 </span>
 </h4>
 <div class="doc doc-contents">
+<p>Run SRE</p>
 <p>This runs SRE for num_rounds rounds, using num_simulations_per_round calls to
-the simulator per round.</p>
-<p>:param num_rounds: Number of rounds to run.
-:param num_simulations_per_round: Number of simulator calls per round.</p>
-<p>:return: None</p>
+the simulator</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>num_rounds</code></td>
+<td><code>int</code></td>
+<td>
+<p>Number of rounds to run</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>num_simulations_per_round</code></td>
+<td><code>Union[List[int], int]</code></td>
+<td>
+<p>Number of simulator calls per round</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>batch_size</code></td>
+<td><code>int</code></td>
+<td>
+<p>Size of batch to use for training.</p>
+</td>
+<td><code>100</code></td>
+</tr>
+<tr>
+<td><code>learning_rate</code></td>
+<td><code>float</code></td>
+<td>
+<p>Learning rate for Adam optimizer.</p>
+</td>
+<td><code>0.0005</code></td>
+</tr>
+<tr>
+<td><code>validation_fraction</code></td>
+<td><code>float</code></td>
+<td>
+<p>The fraction of data to use for validation.</p>
+</td>
+<td><code>0.1</code></td>
+</tr>
+<tr>
+<td><code>stop_after_epochs</code></td>
+<td><code>int</code></td>
+<td>
+<p>The number of epochs to wait for improvement on the validation set before terminating training.</p>
+</td>
+<td><code>20</code></td>
+</tr>
+</tbody>
+</table>
+<p>Returns: 
+    Posterior that can be sampled and evaluated.</p>
 <details class="quote">
 <summary>Source code in <code>sbi/inference/sre/sre.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>108
+<pre><span></span>107
+108
 109
 110
 111
@@ -1366,24 +1541,54 @@ the simulator per round.</p>
 175
 176
 177
-178</pre>
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">num_rounds</span><span class="p">,</span> <span class="n">num_simulations_per_round</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">"""</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">num_rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_simulations_per_round</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e-4</span><span class="p">,</span>
+    <span class="n">validation_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">stop_after_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Posterior</span><span class="p">:</span>
+    <span class="sd">"""Run SRE</span>
+
 <span class="sd">    This runs SRE for num_rounds rounds, using num_simulations_per_round calls to</span>
-<span class="sd">    the simulator per round.</span>
+<span class="sd">    the simulator</span>
 
-<span class="sd">    :param num_rounds: Number of rounds to run.</span>
-<span class="sd">    :param num_simulations_per_round: Number of simulator calls per round.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        num_rounds: Number of rounds to run</span>
+<span class="sd">        num_simulations_per_round: Number of simulator calls per round</span>
+<span class="sd">        batch_size: Size of batch to use for training.</span>
+<span class="sd">        learning_rate: Learning rate for Adam optimizer.</span>
+<span class="sd">        validation_fraction: The fraction of data to use for validation.</span>
+<span class="sd">        stop_after_epochs: The number of epochs to wait for improvement on the</span>
+<span class="sd">            validation set before terminating training.</span>
 
-<span class="sd">    :return: None</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        Posterior that can be sampled and evaluated.</span>
 <span class="sd">    """</span>
-
     <span class="n">round_description</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="n">tbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_rounds</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">round_</span> <span class="ow">in</span> <span class="n">tbar</span><span class="p">:</span>
@@ -1418,7 +1623,12 @@ the simulator per round.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_observation_bank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">observations</span><span class="p">))</span>
 
         <span class="c1"># Fit posterior using newly aggregated data set.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_classifier</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">learning_rate</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span>
+            <span class="n">validation_fraction</span><span class="o">=</span><span class="n">validation_fraction</span><span class="p">,</span>
+            <span class="n">stop_after_epochs</span><span class="o">=</span><span class="n">stop_after_epochs</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Update description for progress bar.</span>
         <span class="n">round_description</span> <span class="o">=</span> <span class="p">(</span>
@@ -1521,7 +1731,8 @@ __init__<span class="p">(</span><span class="bp">self</span><span class="p">,</s
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span> 25
+<pre><span></span> 24
+ 25
  26
  27
  28
@@ -1601,8 +1812,7 @@ __init__<span class="p">(</span><span class="bp">self</span><span class="p">,</s
 102
 103
 104
-105
-106</pre>
+105</pre>
 </div>
 </td>
 <td class="code">
